@@ -41,10 +41,25 @@ public class ClientHandler {
                     break;
                 }
                 if (message.startsWith("/w ")) {
-                    // TODO homework chat part 1
+                    // TODO homework chat part one
+                }
+                if ("/kick".equals(message.split(" ")[0]) && "ADMIN".equals(server.getUserService().getUserRole(username))) {
+                    kickUser(message.split(" ")[1]);
                 }
             }
             server.broadcastMessage(username + ": " + message);
+        }
+    }
+
+    private void kickUser(String targetUsername) {
+        ClientHandler targetClient = server.getClientByUsername(targetUsername);
+        if (targetClient != null) {
+            targetClient.sendMessage("Вас исключил из чата " + username);
+            server.unsubscribe(targetClient);
+            targetClient.disconnect();
+            server.broadcastMessage(targetUsername + " был исключен из чата пользователем " + username);
+        } else {
+            sendMessage("Пользователь " + targetUsername + " не найден.");
         }
     }
 
